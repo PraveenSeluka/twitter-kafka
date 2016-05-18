@@ -17,6 +17,8 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import static net.sourceforge.argparse4j.impl.Arguments.store;
 
+import org.apache.kafka.clients.producer.*;
+
 
 public class Producer
 {
@@ -30,7 +32,7 @@ public class Producer
             String filters = res.getString("filters");
             String configFile = res.getString("conf");
 
-            Properties props = new Properties();
+            final Properties props = new Properties();
             try {
 
                 String confFile = "conf/producer.conf";
@@ -60,9 +62,10 @@ public class Producer
 
             props.list(System.out);
 
-            //final KafkaProducer producer = new KafkaProducer(props);
+            final KafkaProducer<String,String> producer = new KafkaProducer(props);
 
             StatusListener listener = new StatusListener(){
+                int messageCount = 0;
                 public void onStallWarning(StallWarning warn) {
                     System.err.println("warning");
                 }
@@ -73,13 +76,20 @@ public class Producer
                     double lat=0.0;
                     double lon=0.0;
                     if(status.getGeoLocation() !=null) {
-                        System.out.println("**************");
                         lat = status.getGeoLocation().getLatitude();
                         lon = status.getGeoLocation().getLongitude();
                     }
-
-                    System.out.println(status.getUser().getName() + " : " + status.getText()+ " "+status.getFavoriteCount()+" "+status.getRetweetCount()+" " + lat + " " + lon);
-
+                    String userName = status.getUser().getName();
+                    String tweet = status.getText();
+                    int favCount = status.getFavoriteCount();
+                    int retweetCount = status.getRetweetCount();
+                    ProducerRecord<String,String> record = new ProducerRecord(props.getProperty("topic"),userName, tweet);
+                    producer.send(record);
+                    messageCount++;
+                    if(messageCount%100 == 0) {
+                        System.out.println("Total messages written : " + messageCount);
+                        System.out.println("Sample tweet : " + status.getUser().getName() + " : " + status.getText()+ " "+status.getFavoriteCount()+" "+status.getRetweetCount()+" " + lat + " " + lon);
+                    }
                 }
                 public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {}
                 public void onTrackLimitationNotice(int numberOfLimitedStatuses) {}
