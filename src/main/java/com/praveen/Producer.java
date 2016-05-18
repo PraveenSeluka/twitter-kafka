@@ -129,7 +129,7 @@ public class Producer
 
         parser.addArgument("--topic")
                 .action(store())
-                .required(true)
+                .required(false)
                 .type(String.class)
                 .metavar("TOPIC")
                 .help("produce messages to this topic");
