@@ -1,10 +1,12 @@
 # twitter-kafka
 
-Build : mvn package
+**Build** : `mvn package`
 
-Run : java -cp target/twitter-kafka-1.0-SNAPSHOT.jar:target/* com.praveen.Producer
+Edit the conf/producer.conf file and set your twitter credentials
 
-usage: Twitter Kafka Connector [-h] [--conf CONF] --topic TOPIC [--producer-props PROP-NAME=PROP-VALUE [PROP-NAME=PROP-VALUE ...]] [--filters FILTERS]
+**Run** : `java -cp target/twitter-kafka-1.0-SNAPSHOT.jar:target/* com.praveen.Producer`
+
+**usage** : Twitter Kafka Connector [-h] [--conf CONF] --topic TOPIC [--producer-props PROP-NAME=PROP-VALUE [PROP-NAME=PROP-VALUE ...]] [--filters FILTERS]
 
 This tool can consumer twitter data (based on filters) and publish to Kafka
 
